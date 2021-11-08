@@ -1,0 +1,291 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.webcheckers</groupId>
+  <artifactId>checkers-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Web Checkers a'la Spark/Java11.    REMEMBER YOU MUST SET    System environment var   JAVA_HOME   !!!!    </name>
+  <description>Checkers game with a Spark and Java 11 architecture. </description>
+
+  <properties>
+
+    <!-- General build properties -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jdk.version>11</jdk.version>
+
+    <!-- Application build dependency versions -->
+    <maven.compiler.version>3.8.0</maven.compiler.version>
+    <maven.assembly.version>3.1.0</maven.assembly.version>
+    <maven.exec.version>1.6.0</maven.exec.version>
+    
+    <!-- Application dependency versions -->
+    <spark.version>2.7.2</spark.version>
+    <spark.freemarker.version>2.7.1</spark.freemarker.version>
+    <freemarker.version>2.3.28</freemarker.version>
+    <gson.version>2.8.5</gson.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    
+    <!-- Test build dependency versions -->
+    <maven.surefire.version>2.22.0</maven.surefire.version>
+    <jacoco.version>0.8.5</jacoco.version>
+    
+    <!-- Test dependency versions -->
+    <junit.jupiter.version>5.3.0</junit.jupiter.version>
+    <apiguardian.version>1.0.0</apiguardian.version>
+    <junit.version>5.0</junit.version>
+    <mockito.version>2.22.0</mockito.version>
+    
+  </properties>
+
+  <dependencies>
+
+    <!-- Spark Java library -->
+    <dependency>
+      <groupId>com.sparkjava</groupId>
+      <artifactId>spark-core</artifactId>
+      <version>${spark.version}</version>
+    </dependency>
+
+    <!-- Spark FreeMarker integration -->
+    <dependency>
+      <groupId>com.sparkjava</groupId>
+      <artifactId>spark-template-freemarker</artifactId>
+      <version>${spark.freemarker.version}</version>
+    </dependency>
+
+    <!-- FreeMarker library -->
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>${freemarker.version}</version>
+    </dependency>
+
+    <!-- JSON utils -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+    </dependency>
+
+    <!-- Logging library -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <!-- START: Unit testing libraries -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- END: Unit testing libraries -->
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <!-- START: Application build plugins -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.version}</version>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven.exec.version}</version>
+        <configuration>
+          <mainClass>com.webcheckers.Application</mainClass>
+        </configuration>
+        <executions>
+	  <!-- Run all tier-specific unit test with code coverage
+	       report -->
+          <execution>
+            <id>tests-and-coverage</id>
+            <configuration>
+              <executable>mvn</executable>
+              <arguments>
+                <argument>clean</argument>
+                <argument>test-compile</argument>
+                <argument>surefire:test@ui</argument>
+                <argument>jacoco:report@ui</argument>
+                <argument>surefire:test@appl</argument>
+                <argument>jacoco:report@appl</argument>
+                <argument>surefire:test@model</argument>
+                <argument>jacoco:report@model</argument>
+              </arguments>
+            </configuration>
+          </execution>
+	  <!-- Generate PDF from markdown design document.
+	       ${project.build.directory} directory must exist already.
+	  -->
+          <execution>
+            <id>docs</id>
+            <configuration>
+              <executable>pandoc</executable>
+              <workingDirectory>docs</workingDirectory>
+              <arguments>
+                <argument>DesignDoc.md</argument>
+                <argument>-o</argument>
+                <argument>${project.build.directory}/DesignDoc.pdf</argument>
+              </arguments>
+            </configuration>
+          </execution>
+	  <!-- Generate distribution zipfile for project -->
+          <execution>
+            <id>zip</id>
+            <configuration>
+              <executable>mvn</executable>
+              <arguments>
+                <argument>assembly:single</argument>
+              </arguments>
+            </configuration>
+          </execution>	  
+        </executions>
+      </plugin>
+      
+      <!-- Distribution zipfile is created using the assembly plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${maven.assembly.version}</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/zip.xml</descriptor>
+          </descriptors>
+          <finalName>WebCheckers</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <goals>
+          <goal>single</goal>
+        </goals>
+      </plugin>
+      
+      <!-- END: Application build plugins -->
+
+      <!-- START: Testing plugins -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>ui</id>
+            <configuration>
+              <properties>
+                <includeTags>UI-tier</includeTags>
+              </properties>
+            </configuration>
+          </execution>
+          <execution>
+            <id>appl</id>
+            <configuration>
+              <properties>
+                <includeTags>Application-tier</includeTags>
+              </properties>
+            </configuration>
+          </execution>
+          <execution>
+            <id>model</id>
+            <configuration>
+              <properties>
+                <includeTags>Model-tier</includeTags>
+              </properties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <destfile>/target/coverage-reports/jacoco-unit.exec</destfile>
+          <datafile>/target/coverage-reports/jacoco-unit.exec</datafile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>jacoco-initialize</id>
+            <configuration>
+              <!-- throw away the old data with each test run -->
+              <append>false</append>
+            </configuration>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>ui</id>
+            <configuration>
+              <footer>UI Tier</footer>
+              <title>WebCheckers UI Tier Test Coverage</title>
+              <outputDirectory>target/site/jacoco/ui</outputDirectory>
+            </configuration>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>appl</id>
+            <configuration>
+              <footer>Application Tier</footer>
+              <title>WebCheckers Application Tier Test Coverage</title>
+              <outputDirectory>target/site/jacoco/appl</outputDirectory>
+            </configuration>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>model</id>
+            <configuration>
+              <footer>Model Tier</footer>
+              <title>WebCheckers Model Tier Test Coverage</title>
+              <outputDirectory>target/site/jacoco/model</outputDirectory>
+            </configuration>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- END: Testing plugins -->
+      
+    </plugins>
+  </build>
+
+</project>
