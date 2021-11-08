@@ -1,0 +1,32 @@
+-------------------------------------------------------------------------------
+Test set: com.webcheckers.model.BoardViewDemoModeTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 7, Errors: 0, Skipped: 0, Time elapsed: 0.055 s <<< FAILURE! - in com.webcheckers.model.BoardViewDemoModeTest
+test_kingDemoBoard  Time elapsed: 0.012 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: com.webcheckers.model.Space@3af58f76<3true> but was: com.webcheckers.model.Space@2ead6ba4<3true>
+	at com.webcheckers.model.BoardViewDemoModeTest.test_kingDemoBoard(BoardViewDemoModeTest.java:145)
+
+test_jumpKingDemoBoard  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: com.webcheckers.model.Space@3ddb774f<1true> but was: com.webcheckers.model.Space@2582b0ef<1true>
+	at com.webcheckers.model.BoardViewDemoModeTest.test_jumpKingDemoBoard(BoardViewDemoModeTest.java:200)
+
+test_moveKingDemoBoard  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: com.webcheckers.model.Space@70721c12<0true> but was: com.webcheckers.model.Space@769bd849<0true>
+	at com.webcheckers.model.BoardViewDemoModeTest.test_moveKingDemoBoard(BoardViewDemoModeTest.java:170)
+
+test_jumpDemoBoard  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: com.webcheckers.model.Space@101ca8da<0true> but was: com.webcheckers.model.Space@20a967fe<0true>
+	at com.webcheckers.model.BoardViewDemoModeTest.test_jumpDemoBoard(BoardViewDemoModeTest.java:86)
+
+test_multipleJumpDemoBoard  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: com.webcheckers.model.Space@405b6d75<1true> but was: com.webcheckers.model.Space@682abca7<1true>
+	at com.webcheckers.model.BoardViewDemoModeTest.test_multipleJumpDemoBoard(BoardViewDemoModeTest.java:119)
+
+test_winDemoBoard  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: com.webcheckers.model.Space@1d858300<1true> but was: com.webcheckers.model.Space@76f881d9<1true>
+	at com.webcheckers.model.BoardViewDemoModeTest.test_winDemoBoard(BoardViewDemoModeTest.java:226)
+
+test_noMovesDemoBoard  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: com.webcheckers.model.Space@6dd36ab6<1true> but was: com.webcheckers.model.Space@50a13c2f<1true>
+	at com.webcheckers.model.BoardViewDemoModeTest.test_noMovesDemoBoard(BoardViewDemoModeTest.java:253)
+
